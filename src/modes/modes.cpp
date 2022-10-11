@@ -21,7 +21,7 @@ double measure_time(int N, function<void()> func) {
 // --- Interactive mode --- //
 
 void interactive_mode(const Settings &config) {
-  cout << "Enter two big nsumbers to multiply them" << endl;
+  cout << "Enter two big numbers to multiply them" << endl;
   cout << "Press Ctrl + C or leave input empty to exit" << endl;
 
   if (config.iters) {

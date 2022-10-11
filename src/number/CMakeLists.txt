@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 
 # Название проекта
-project(modes)
+project(number)
 
 # Установка переменной со списком исходников
-set(SOURCE_LIB modes.cpp)
+set(SOURCE_LIB number.cpp)
 
 # Создание статической библиотеки
-add_library(modes STATIC ${SOURCE_LIB})
+add_library(number STATIC ${SOURCE_LIB})

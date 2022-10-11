@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 
 # Название проекта
-project(number)
+project(fourier)
 
 # Установка переменной со списком исходников
-set(SOURCE_LIB number.cpp)
+set(SOURCE_LIB fourier.cpp)
 
 # Создание статической библиотеки
-add_library(number STATIC ${SOURCE_LIB})
+add_library(fourier STATIC ${SOURCE_LIB})
