@@ -1,5 +1,7 @@
 #include "modes.h"
 
+#include <signal.h>
+
 #include <chrono>
 #include <functional>
 #include <iostream>

@@ -28,6 +28,13 @@ size_t Number::size() const { return digits.size(); }
 bool Number::is_negative() const { return negative; }
 uint16_t Number::operator[](const size_t &i) const { return digits[i]; }
 
+string Number::to_string() const {
+  string s = "";
+  if (negative) s += "-";
+  for (int i = digits.size() - 1; i >= 0; i--) s += digits[i] + '0';
+  return s;
+}
+
 void Number::set(const string &s) {
   digits.clear();
   if (s.empty()) throw invalid_argument("Invalid number");

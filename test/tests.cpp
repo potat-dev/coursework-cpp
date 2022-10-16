@@ -1,0 +1,8 @@
+#include "../src/number/number.h"
+
+int main() {
+  Number a("123456789012345678901234567890");
+  Number b("123456789012345678901234567890");
+  Number c = fft_multiply(a, b);
+  return c.to_string() != "15241578753238836750495351562536198787501905199875019052100";
+}
