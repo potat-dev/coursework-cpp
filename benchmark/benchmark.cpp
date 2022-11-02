@@ -13,15 +13,15 @@ using namespace std;
 #define FOLDER "../../benchmark/numbers/"
 
 // Start and end powers of 2 for the benchmark
-#define MIN_POWER 13
-#define MAX_POWER 15
+#define MIN_POWER 9
+#define MAX_POWER 14
 
 // Total powers (table size)
 constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 
 // Iterations per pair of numbers
 #define MIN_ITERATIONS 5
-#define MIN_SECONDS 2
+#define MIN_SECONDS 1
 #define MAX_SECONDS 10
 
 // MAX_SECONDS has more priority than MIN_ITERATIONS
@@ -31,6 +31,17 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // Flag to override this (cancel) behavior
 // If this flag is defined, then minimum number of iterations is 1
 #define AT_LEAST_ONE_ITERATION
+
+// TODO: Caching settings
+// If this flag is defined, then iters will be loaded from cache
+// (to avoid long startup time before the benchmark)
+// If this flag is not defined, then iters will be recalculated and cached
+// #define LOAD_FROM_CACHE
+#define CACHE_FILE "cache.json"
+
+// TODO: Export results to CSV file
+#define EXPORT_TO_CSV
+#define CSV_FILE "results.csv"
 
 // Print debug information and tables
 #define DEBUG
@@ -90,15 +101,13 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
   cout << "Done!" << endl;
-  cout << "Measuring speed for more efficient benchmarking..." << endl;
 #endif
 
+#ifndef LOAD_FROM_CACHE
+  cout << "Measuring speed for more efficient benchmarking..." << endl;
+
   for (int a = 0; a < POWERS_TOTAL; a++) {
-    for (int b = 0; b < POWERS_TOTAL; b++) {
-      // #ifdef DEBUG // affects performance
-      //       cout << "Measuring 2^" << a + MIN_POWER;
-      //       cout << " digits * 2^" << b + MIN_POWER << " digits..." << endl;
-      // #endif
+    for (int b = a; b < POWERS_TOTAL; b++) {
       auto start = chrono::high_resolution_clock::now();
       result = mult(numbers[a], numbers[b]);
       auto end = chrono::high_resolution_clock::now();
@@ -112,7 +121,7 @@ int main(int argc, char **argv) {
 
   // calculate iters for each pair to run between MIN_SECONDS and MAX_SECONDS
   for (int a = 0; a < POWERS_TOTAL; a++) {
-    for (int b = 0; b < POWERS_TOTAL; b++) {
+    for (int b = a; b < POWERS_TOTAL; b++) {
       // calculate min and max iterations
       int iters_for_min_seconds = (int)round(MIN_SECONDS * 1000 / times[a][b]);
       int iters_for_max_seconds = (int)round(MAX_SECONDS * 1000 / times[a][b]);
@@ -127,6 +136,16 @@ int main(int argc, char **argv) {
     }
   }
 
+  // TODO: save to json cache
+  // save iters, times and total_time to json
+  // (to avoid long calculations in the future)
+  // save settings too (to check if they are the same)
+#else  // LOAD_FROM_CACHE
+  // TODO: load from json cache
+  // check settings stored in json
+  // load times, iters, total_time
+#endif
+
 #ifdef DEBUG
   cout << "Time for 1 iteration of each pair (ms):\n" << endl;
   ptable(times, MIN_POWER, MAX_COLUMNS);
@@ -140,7 +159,7 @@ int main(int argc, char **argv) {
 
   // run all iterations
   for (int a = 0; a < POWERS_TOTAL; a++) {
-    for (int b = 0; b < POWERS_TOTAL; b++) {
+    for (int b = a; b < POWERS_TOTAL; b++) {
       auto start = chrono::high_resolution_clock::now();
       for (int i = 0; i < iters[a][b]; i++)
         result = mult(numbers[a], numbers[b]);
