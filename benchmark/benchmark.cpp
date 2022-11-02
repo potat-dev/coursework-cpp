@@ -8,7 +8,7 @@
 #include "../src/number/number.h"
 
 #define MIN_POWER 0
-#define MAX_POWER 24
+#define MAX_POWER 15
 
 #define MAX_COLUMNS 10
 
@@ -29,20 +29,25 @@ double measure_time(int N, function<void()> func) {
   return (double)duration.count() / N / 1000;  // return in milliseconds
 }
 
-void print_table(vector<vector<double>> table, int axis_offset, int split) {
+void print_table(vector<vector<double>> table, int axis_offset, int split,
+                 int tab_size = 8, int index_width = 3) {
   int rows = table.size();
   int splitted_parts = rows / split + (rows % split != 0);
   for (int table_n = 0; table_n < splitted_parts; table_n++) {
     int columns = min(split, (int)rows - table_n * split);
+    cout << setw(index_width + 3) << " | ";
     for (int i = 0; i < columns; i++) {
-      cout << '\t' << i + axis_offset + table_n * split;
+      cout << setw(tab_size) << i + axis_offset + table_n * split;
     }
     cout << endl;
+    cout << string(index_width, '-') << "-+-";
+    cout << string(columns * tab_size, '-') << endl;
+
     for (int row = 0; row < rows; row++) {
-      cout << row + axis_offset << "\t";
+      cout << setw(index_width) << row + axis_offset << " | ";
       for (int column = 0; column < columns; column++) {
         int index = table_n * split + column;
-        cout << table[row][index] << '\t';
+        cout << setw(tab_size) << table[row][index];
       }
       cout << endl;
     }
