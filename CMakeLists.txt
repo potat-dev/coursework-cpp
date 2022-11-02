@@ -9,6 +9,7 @@ enable_testing()
 # добавление подпроектов
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(benchmark)
 
 # Создает исполняемый файл с именем coursework
 add_executable(multiplier src/main.cpp)
