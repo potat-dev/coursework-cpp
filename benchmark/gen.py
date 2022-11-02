@@ -3,7 +3,7 @@
 
 from random import randint
 from gmpy2 import mpz  # для работы с большими числами
-from tqdm import tqdm, trange
+from tqdm import trange
 import os
 import time
 
@@ -26,15 +26,13 @@ def get_folder_size(start_power, end_power):
         return f"{num:.1f} Yi{suffix}"
 
     powers = [2**i for i in range(start_power, end_power + 1)]
-    size = sum(powers) + sum([a + b for a in powers for b in powers])
+    matrix = [
+        2**pow_1 + 2**pow_2
+        for pow_1 in range(start_power, end_power + 1)
+        for pow_2 in range(pow_1, end_power + 1)
+    ]
+    size = sum(powers) + sum(matrix)
     return sizeof_fmt(size)
-
-
-print('You need', get_folder_size(START_POWER, END_POWER),
-      'of free space to generate test data')
-i = input('Continue? (y/n) ')
-if i != 'y':
-    exit()
 
 
 def generate_num(digits):
@@ -45,32 +43,31 @@ def generate_num(digits):
     ])
 
 
+print('You need', get_folder_size(START_POWER, END_POWER),
+      'of free space to generate test data')
+
+if input('Continue? (y/n) ') != 'y':
+    exit()
+
 # создаем папку, если её нет
 if not os.path.exists(folder):
     os.mkdir(folder)
 
-# создаем файлы
+# создаем случайные числа и записываем их в файлы
+numbers = []
 for power in trange(START_POWER, END_POWER + 1, desc='Generating numbers'):
     digits = 2 ** power
     number = generate_num(digits)
-
+    numbers.append(mpz(number))
     with open(os.path.join(folder, f'{power}.txt'), 'w') as f:
         f.write(number)
         time.sleep(0.1)
 
 # создаем файлы с ответами
-for pow_1 in trange(START_POWER, END_POWER + 1,                  desc='Multiplying number 1'):
-    for pow_2 in trange(START_POWER, END_POWER + 1, leave=False, desc='         by number 2'):
-        # считываем числа из файлов
-        with open(os.path.join(folder, f'{pow_1}.txt'), 'r') as f:
-            number_1 = f.read()
-
-        with open(os.path.join(folder, f'{pow_2}.txt'), 'r') as f:
-            number_2 = f.read()
-
+for pow_1 in trange(START_POWER, END_POWER + 1,            desc='Multiplying number'):
+    for pow_2 in trange(pow_1, END_POWER + 1, leave=False, desc='  by second number'):
         with open(os.path.join(folder, f'{pow_1}_{pow_2}.txt'), 'w') as f:
-            ans = mpz(number_1) * mpz(number_2)
+            ans = numbers[pow_1] * numbers[pow_2]
             ans_str = ans.digits()
             f.write(ans_str)
-
         time.sleep(0.1)
