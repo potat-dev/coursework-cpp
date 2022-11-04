@@ -3,25 +3,27 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <tabulate/table.hpp>
 #include <vector>
 
 #include "../src/number/number.h"
 
+using namespace tabulate;
 using namespace std;
 
 // Test numbers folder (created by gen.py)
 #define FOLDER "../../benchmark/numbers/"
 
 // Start and end powers of 2 for the benchmark
-#define MIN_POWER 9
-#define MAX_POWER 14
+#define MIN_POWER 0
+#define MAX_POWER 5
 
 // Total powers (table size)
 constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 
 // Iterations per pair of numbers
 #define MIN_ITERATIONS 5
-#define MIN_SECONDS 1
+#define MIN_SECONDS 2
 #define MAX_SECONDS 10
 
 // MAX_SECONDS has more priority than MIN_ITERATIONS
@@ -49,32 +51,35 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // Table max columns (for wrapping)
 #define MAX_COLUMNS 10
 
-template <typename T>
 // template function to print table
-void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10,
-            int tab_size = 8, int index_width = 3, bool round_val = false) {
+template <typename T>
+void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
   int rows = table.size();
   int splitted_parts = rows / split + (rows % split != 0);
   for (int table_n = 0; table_n < splitted_parts; table_n++) {
+    Table t;
+    t.format().locale("C");  // to export LANG=C
+    // add header
     int columns = min(split, (int)rows - table_n * split);
-    cout << setw(index_width + 3) << " | ";
+    Table::Row_t header;
+    header.push_back("");
     for (int i = 0; i < columns; i++) {
-      cout << setw(tab_size) << i + axis_offset + table_n * split;
+      header.push_back(to_string(table_n * split + i + axis_offset));
     }
-    cout << endl;
-    cout << string(index_width, '-') << "-+-";
-    cout << string(columns * tab_size, '-') << endl;
-
+    t.add_row(header);
+    // add rows with data
     for (int row = 0; row < rows; row++) {
-      cout << setw(index_width) << row + axis_offset << " | ";
+      Table::Row_t r;
+      r.push_back(to_string(row + axis_offset));
       for (int column = 0; column < columns; column++) {
         int index = table_n * split + column;
-        cout << setw(tab_size);
-        cout << (round_val ? round(table[row][index]) : table[row][index]);
+        r.push_back(to_string(table[row][index]));
       }
-      cout << endl;
+      t.add_row(r);
     }
-    cout << endl;
+    t[0].format().font_style({FontStyle::bold}).font_color(Color::cyan);
+    t.column(0).format().font_style({FontStyle::bold}).font_color(Color::cyan);
+    cout << t << endl << endl;
   }
 }
 
@@ -104,7 +109,7 @@ int main(int argc, char **argv) {
 #endif
 
 #ifndef LOAD_FROM_CACHE
-  cout << "Measuring speed for more efficient benchmarking..." << endl;
+  cout << "Measuring speed for more efficient benchmarking...\n" << endl;
 
   for (int a = 0; a < POWERS_TOTAL; a++) {
     for (int b = a; b < POWERS_TOTAL; b++) {
@@ -113,6 +118,10 @@ int main(int argc, char **argv) {
       auto end = chrono::high_resolution_clock::now();
       auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
       times[a][b] = (double)duration.count() / 1000;  // return in milliseconds
+    }
+    // fill the rest of the table with NaN
+    for (int b = 0; b < a; b++) {
+      times[a][b] = NAN;
     }
   }
 
@@ -166,6 +175,7 @@ int main(int argc, char **argv) {
       auto end = chrono::high_resolution_clock::now();
       auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
       times[a][b] = (double)duration.count() / 1000 / iters[a][b];
+      times[b][a] = times[a][b];
 #ifdef DEBUG
       cout << "2^" << a + MIN_POWER << " digits * 2^" << b + MIN_POWER;
       cout << " digits: " << times[a][b] << " ms" << endl;
@@ -175,7 +185,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
   cout << endl << "Average time for each pair (ms):\n" << endl;
-  ptable(times, MIN_POWER, MAX_COLUMNS, 10);
+  ptable(times, MIN_POWER, MAX_COLUMNS);
 #endif
 
   return 0;
