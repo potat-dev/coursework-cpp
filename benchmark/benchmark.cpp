@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../src/number/number.h"
+#include "cache.hpp"
 
 using namespace tabulate;
 using namespace std;
@@ -31,15 +32,15 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // Too long operations will be cutted to MAX_SECONDS or canceled
 
 // Flag to override this (cancel) behavior
-// If this flag is defined, then minimum number of iterations is 1
-#define AT_LEAST_ONE_ITERATION
+// If defined, then minimum number of iterations is its value
+#define AT_LEAST_ITERATIONS 1
 
 // TODO: Caching settings
 // If this flag is defined, then iters will be loaded from cache
 // (to avoid long startup time before the benchmark)
 // If this flag is not defined, then iters will be recalculated and cached
 // #define LOAD_FROM_CACHE
-#define CACHE_FILE "cache.json"
+#define CACHE_FILE "cache.txt"
 
 // TODO: Export results to CSV file
 #define EXPORT_TO_CSV
@@ -58,11 +59,11 @@ void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
   int splitted_parts = rows / split + (rows % split != 0);
   for (int table_n = 0; table_n < splitted_parts; table_n++) {
     Table t;
-    t.format().locale("C");  // to export LANG=C
+    t.format().font_align(FontAlign::right).locale("C");  // to export LANG=C
     // add header
     int columns = min(split, (int)rows - table_n * split);
     Table::Row_t header;
-    header.push_back("");
+    header.push_back("i");
     for (int i = 0; i < columns; i++) {
       header.push_back(to_string(table_n * split + i + axis_offset));
     }
@@ -94,6 +95,7 @@ int main(int argc, char **argv) {
 
   vector<vector<double>> times(POWERS_TOTAL, vector<double>(POWERS_TOTAL));
   vector<vector<int>> iters(POWERS_TOTAL, vector<int>(POWERS_TOTAL));
+  long double total_time = 0;
 
 #ifdef DEBUG
   cout << "Loading numbers... ";
@@ -120,13 +122,8 @@ int main(int argc, char **argv) {
       times[a][b] = (double)duration.count() / 1000;  // return in milliseconds
     }
     // fill the rest of the table with NaN
-    for (int b = 0; b < a; b++) {
-      times[a][b] = NAN;
-    }
+    // for (int b = 0; b < a; b++) times[a][b] = NAN;
   }
-
-  // total time for all iterations of all pairs
-  long double total_time = 0;
 
   // calculate iters for each pair to run between MIN_SECONDS and MAX_SECONDS
   for (int a = 0; a < POWERS_TOTAL; a++) {
@@ -137,22 +134,30 @@ int main(int argc, char **argv) {
       // calculate iterations count
       iters[a][b] = max(MIN_ITERATIONS, iters_for_min_seconds);
       iters[a][b] = min(iters[a][b], iters_for_max_seconds);
-#ifdef AT_LEAST_ONE_ITERATION
-      iters[a][b] = max(iters[a][b], 1);
+#ifdef AT_LEAST_ITERATIONS
+      iters[a][b] = max(iters[a][b], AT_LEAST_ITERATIONS);
 #endif
       // calculate total time in milliseconds
       total_time += times[a][b] * iters[a][b];
     }
   }
 
-  // TODO: save to json cache
-  // save iters, times and total_time to json
+  // TODO: save to cache
+  // save iters and times to txt file
   // (to avoid long calculations in the future)
   // save settings too (to check if they are the same)
+  // settings: MIN_POWER, MAX_POWER, MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS,
+  // AT_LEAST_ITERATIONS
+
+  save_cache(CACHE_FILE, iters, times, total_time, MIN_POWER, MAX_POWER,
+             MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS, AT_LEAST_ITERATIONS);
+
 #else  // LOAD_FROM_CACHE
-  // TODO: load from json cache
-  // check settings stored in json
-  // load times, iters, total_time
+  // TODO: load from cache
+  // check settings stored in txt
+  // load times and iters
+  load_cache(CACHE_FILE, &iters, &times, &total_time, MIN_POWER, MAX_POWER,
+             MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS, AT_LEAST_ITERATIONS);
 #endif
 
 #ifdef DEBUG
