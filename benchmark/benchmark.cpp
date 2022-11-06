@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <tabulate/table.hpp>
 #include <vector>
@@ -35,7 +36,6 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // If defined, then minimum number of iterations is its value
 #define AT_LEAST_ITERATIONS 1
 
-// TODO: Caching settings
 // If this flag is defined, then iters will be loaded from cache
 // (to avoid long startup time before the benchmark)
 // If this flag is not defined, then iters will be recalculated and cached
@@ -52,6 +52,14 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // Table max columns (for wrapping)
 #define MAX_COLUMNS 10
 
+// float to string with auto precision
+template <typename T>
+std::string to_str(T f) {
+  std::stringstream ss;
+  ss << f;
+  return ss.str();
+}
+
 // template function to print table
 template <typename T>
 void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
@@ -65,16 +73,16 @@ void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
     Table::Row_t header;
     header.push_back("i");
     for (int i = 0; i < columns; i++) {
-      header.push_back(to_string(table_n * split + i + axis_offset));
+      header.push_back(to_str(table_n * split + i + axis_offset));
     }
     t.add_row(header);
     // add rows with data
     for (int row = 0; row < rows; row++) {
       Table::Row_t r;
-      r.push_back(to_string(row + axis_offset));
+      r.push_back(to_str(row + axis_offset));
       for (int column = 0; column < columns; column++) {
         int index = table_n * split + column;
-        r.push_back(to_string(table[row][index]));
+        r.push_back(to_str(table[row][index]));
       }
       t.add_row(r);
     }
@@ -85,7 +93,7 @@ void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
 }
 
 int main(int argc, char **argv) {
-  bool use_column = false;
+  bool use_column = 1;
 
   Number (*mult)(const Number &, const Number &) =
       use_column ? column_multiply : fft_multiply;
@@ -93,7 +101,8 @@ int main(int argc, char **argv) {
   vector<Number> numbers(POWERS_TOTAL);
   Number result;
 
-  vector<vector<double>> times(POWERS_TOTAL, vector<double>(POWERS_TOTAL));
+  vector<vector<long double>> times(POWERS_TOTAL,
+                                    vector<long double>(POWERS_TOTAL));
   vector<vector<int>> iters(POWERS_TOTAL, vector<int>(POWERS_TOTAL));
   long double total_time = 0;
 
@@ -118,8 +127,9 @@ int main(int argc, char **argv) {
       auto start = chrono::high_resolution_clock::now();
       result = mult(numbers[a], numbers[b]);
       auto end = chrono::high_resolution_clock::now();
-      auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-      times[a][b] = (double)duration.count() / 1000;  // return in milliseconds
+      auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+      times[a][b] =
+          (long double)duration.count() / 1000000.0;  // return in milliseconds
     }
     // fill the rest of the table with NaN
     // for (int b = 0; b < a; b++) times[a][b] = NAN;
@@ -142,20 +152,14 @@ int main(int argc, char **argv) {
     }
   }
 
-  // TODO: save to cache
   // save iters and times to txt file
   // (to avoid long calculations in the future)
   // save settings too (to check if they are the same)
-  // settings: MIN_POWER, MAX_POWER, MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS,
-  // AT_LEAST_ITERATIONS
-
   save_cache(CACHE_FILE, iters, times, total_time, MIN_POWER, MAX_POWER,
              MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS, AT_LEAST_ITERATIONS);
 
 #else  // LOAD_FROM_CACHE
-  // TODO: load from cache
-  // check settings stored in txt
-  // load times and iters
+  // check settings stored in txt file, load times and iters
   load_cache(CACHE_FILE, &iters, &times, &total_time, MIN_POWER, MAX_POWER,
              MIN_ITERATIONS, MIN_SECONDS, MAX_SECONDS, AT_LEAST_ITERATIONS);
 #endif
@@ -178,12 +182,12 @@ int main(int argc, char **argv) {
       for (int i = 0; i < iters[a][b]; i++)
         result = mult(numbers[a], numbers[b]);
       auto end = chrono::high_resolution_clock::now();
-      auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-      times[a][b] = (double)duration.count() / 1000 / iters[a][b];
+      auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+      times[a][b] = (long double)duration.count() / 1000000.0 / iters[a][b];
       times[b][a] = times[a][b];
 #ifdef DEBUG
-      cout << "2^" << a + MIN_POWER << " digits * 2^" << b + MIN_POWER;
-      cout << " digits: " << times[a][b] << " ms" << endl;
+      cout << "Len 2^" << a + MIN_POWER << " * Len 2^" << b + MIN_POWER;
+      cout << ":\t" << times[a][b] << " ms" << endl;
 #endif
     }
   }

@@ -5,7 +5,7 @@
 #include <vector>
 
 void load_cache(std::string filename, std::vector<std::vector<int>> *iters,
-                std::vector<std::vector<double>> *times, int *total_time,
+                std::vector<std::vector<long double>> *times, int *total_time,
                 int min_power, int max_power, int min_iter, int min_seconds,
                 int max_seconds, int at_least_one_iteration) {
   // load cache
@@ -25,7 +25,7 @@ void load_cache(std::string filename, std::vector<std::vector<int>> *iters,
       _max_seconds != max_seconds ||
       _at_least_one_iteration != at_least_one_iteration) {
     std::cout << "Error: cache settings are not the same" << std::endl;
-    return;
+    throw std::runtime_error("cache settings are not the same");
   }
   // load iters
   for (int i = 0; i < iters->size(); i++) {
@@ -43,7 +43,7 @@ void load_cache(std::string filename, std::vector<std::vector<int>> *iters,
 }
 
 void save_cache(std::string filename, std::vector<std::vector<int>> &iters,
-                std::vector<std::vector<double>> &times, int total_time,
+                std::vector<std::vector<long double>> &times, int total_time,
                 int min_power, int max_power, int min_iter, int min_seconds,
                 int max_seconds, int at_least_one_iteration) {
   // save cache
