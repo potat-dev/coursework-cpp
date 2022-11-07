@@ -1,16 +1,12 @@
 #include <chrono>
 #include <cmath>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <tabulate/table.hpp>
 #include <vector>
 
 #include "../src/number/number.h"
-#include "cache.hpp"
+#include "utils.hpp"
 
-using namespace tabulate;
 using namespace std;
 
 // Test numbers folder (created by gen.py)
@@ -18,7 +14,7 @@ using namespace std;
 
 // Start and end powers of 2 for the benchmark
 #define MIN_POWER 0
-#define MAX_POWER 5
+#define MAX_POWER 18
 
 // Total powers (table size)
 constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
@@ -50,50 +46,10 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 #define DEBUG
 
 // Table max columns (for wrapping)
-#define MAX_COLUMNS 10
-
-// float to string with auto precision
-template <typename T>
-std::string to_str(T f) {
-  std::stringstream ss;
-  ss << f;
-  return ss.str();
-}
-
-// template function to print table
-template <typename T>
-void ptable(vector<vector<T>> table, int axis_offset = 0, int split = 10) {
-  int rows = table.size();
-  int splitted_parts = rows / split + (rows % split != 0);
-  for (int table_n = 0; table_n < splitted_parts; table_n++) {
-    Table t;
-    t.format().font_align(FontAlign::right).locale("C");  // to export LANG=C
-    // add header
-    int columns = min(split, (int)rows - table_n * split);
-    Table::Row_t header;
-    header.push_back("i");
-    for (int i = 0; i < columns; i++) {
-      header.push_back(to_str(table_n * split + i + axis_offset));
-    }
-    t.add_row(header);
-    // add rows with data
-    for (int row = 0; row < rows; row++) {
-      Table::Row_t r;
-      r.push_back(to_str(row + axis_offset));
-      for (int column = 0; column < columns; column++) {
-        int index = table_n * split + column;
-        r.push_back(to_str(table[row][index]));
-      }
-      t.add_row(r);
-    }
-    t[0].format().font_style({FontStyle::bold}).font_color(Color::cyan);
-    t.column(0).format().font_style({FontStyle::bold}).font_color(Color::cyan);
-    cout << t << endl << endl;
-  }
-}
+#define MAX_COLUMNS 8
 
 int main(int argc, char **argv) {
-  bool use_column = 1;
+  bool use_column = false;
 
   Number (*mult)(const Number &, const Number &) =
       use_column ? column_multiply : fft_multiply;
@@ -123,6 +79,8 @@ int main(int argc, char **argv) {
   cout << "Measuring speed for more efficient benchmarking...\n" << endl;
 
   for (int a = 0; a < POWERS_TOTAL; a++) {
+    cout << "Measuring Len 2^" << a + MIN_POWER << "... ";
+    auto loop_start = chrono::high_resolution_clock::now();
     for (int b = a; b < POWERS_TOTAL; b++) {
       auto start = chrono::high_resolution_clock::now();
       result = mult(numbers[a], numbers[b]);
@@ -131,9 +89,12 @@ int main(int argc, char **argv) {
       times[a][b] =
           (long double)duration.count() / 1000000.0;  // return in milliseconds
     }
-    // fill the rest of the table with NaN
-    // for (int b = 0; b < a; b++) times[a][b] = NAN;
+    auto loop_end = chrono::high_resolution_clock::now();
+    auto loop_duration =
+        chrono::duration_cast<chrono::milliseconds>(loop_end - loop_start);
+    cout << "Done! (" << loop_duration.count() << " ms)" << endl;
   }
+  cout << endl;
 
   // calculate iters for each pair to run between MIN_SECONDS and MAX_SECONDS
   for (int a = 0; a < POWERS_TOTAL; a++) {

@@ -11,7 +11,7 @@ FetchContent_Declare(tabulate
 FetchContent_MakeAvailable(tabulate)
 
 # Создаем исполняемый файл
-add_executable(benchmark benchmark.cpp)
+add_executable(benchmark benchmark.cpp utils.cpp)
 
 # Связываем исполняемый файл с библиотеками
 target_link_libraries(benchmark PUBLIC number fourier tabulate)
