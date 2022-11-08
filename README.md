@@ -9,8 +9,8 @@
 ## Сборка
 
 ```console
-mkdir build
-cd build
+mkdir build && cd build
+cmake ..
 cmake --build .
 ```
 
@@ -19,7 +19,7 @@ cmake --build .
 ## Запуск
 
 ```console
-multiplier --help
+multiplier [--help]
 ```
 
 ## Тестирование
