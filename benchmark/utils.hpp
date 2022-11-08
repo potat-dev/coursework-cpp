@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <string>
 #include <tabulate/table.hpp>
 #include <vector>
@@ -20,7 +21,9 @@ void ptable(std::vector<std::vector<T>> table, int axis_offset = 0,
   int splitted_parts = rows / split + (rows % split != 0);
   for (int table_n = 0; table_n < splitted_parts; table_n++) {
     tabulate::Table t;
-    t.format().font_align(tabulate::FontAlign::right).locale("C");  // to export LANG=C
+    t.format()
+        .font_align(tabulate::FontAlign::right)
+        .locale("C");  // to export LANG=C
     // add header
     int columns = std::min(split, (int)rows - table_n * split);
     tabulate::Table::Row_t header;
@@ -39,10 +42,39 @@ void ptable(std::vector<std::vector<T>> table, int axis_offset = 0,
       }
       t.add_row(r);
     }
-    t[0].format().font_style({tabulate::FontStyle::bold}).font_color(tabulate::Color::cyan);
-    t.column(0).format().font_style({tabulate::FontStyle::bold}).font_color(tabulate::Color::cyan);
+    t[0].format()
+        .font_style({tabulate::FontStyle::bold})
+        .font_color(tabulate::Color::cyan);
+    t.column(0)
+        .format()
+        .font_style({tabulate::FontStyle::bold})
+        .font_color(tabulate::Color::cyan);
     std::cout << t << std::endl << std::endl;
   }
+}
+
+template <typename T>
+// template function to export table to csv
+void export_csv(std::vector<std::vector<T>> table, std::string filename,
+                int axis_offset = 0) {
+  std::ofstream file(filename);
+  int rows = table.size();
+  int columns = table[0].size();
+  // add header
+  file << "i";
+  for (int i = 0; i < columns; i++) {
+    file << "," << to_str(i + axis_offset);
+  }
+  file << std::endl;
+  // add rows with data
+  for (int row = 0; row < rows; row++) {
+    file << to_str(row + axis_offset);
+    for (int column = 0; column < columns; column++) {
+      file << "," << to_str(table[row][column]);
+    }
+    file << std::endl;
+  }
+  file.close();
 }
 
 void load_cache(std::string filename, std::vector<std::vector<int>> *iters,

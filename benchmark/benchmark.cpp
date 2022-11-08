@@ -38,8 +38,8 @@ constexpr int POWERS_TOTAL = MAX_POWER - MIN_POWER + 1;
 // #define LOAD_FROM_CACHE
 #define CACHE_FILE "cache.txt"
 
-// TODO: Export results to CSV file
-#define EXPORT_TO_CSV
+// Export results to CSV file
+// If this flag is defined, then results will be exported to CSV file
 #define CSV_FILE "results.csv"
 
 // Print debug information and tables
@@ -156,6 +156,13 @@ int main(int argc, char **argv) {
 #ifdef DEBUG
   cout << endl << "Average time for each pair (ms):\n" << endl;
   ptable(times, MIN_POWER, MAX_COLUMNS);
+#endif
+
+#ifdef CSV_FILE
+  // export results to CSV file
+  cout << "Exporting results to CSV file " << CSV_FILE << "... ";
+  export_csv(times, CSV_FILE, MIN_POWER);
+  cout << "Done!" << endl;
 #endif
 
   return 0;
