@@ -7,88 +7,126 @@
 
 using namespace std;
 
-TEST_CASE("Numbers Methods", "[number]") {
-  SECTION("Constructors") {
-    Number n1;
-    CHECK(n1.size() == 1);
-    CHECK(n1.is_negative() == false);
-    CHECK(n1[0] == 0);
-    CHECK(n1.to_string() == "0");
-
-    Number n2("123");
-    CHECK(n2.size() == 3);
-    CHECK(n2.is_negative() == false);
-    CHECK((n2[0] == 3 && n2[1] == 2 &&
-           n2[2] == 1));  // TODO: add getter for digits
-    CHECK(n2.to_string() == "123");
-
-    Number n3("-123");
-    CHECK(n3.size() == 3);
-    CHECK(n3.is_negative() == true);
-    CHECK((n3[0] == 3 && n3[1] == 2 && n3[2] == 1));
-    CHECK(n3.to_string() == "-123");
-
-    Number n4(123);
-    CHECK(n4.size() == 3);
-    CHECK(n4.is_negative() == false);
-    CHECK((n4[0] == 3 && n4[1] == 2 && n4[2] == 1));
-    CHECK(n4.to_string() == "123");
-
-    Number n5(-123);
-    CHECK(n5.size() == 3);
-    CHECK(n5.is_negative() == true);
-    CHECK((n5[0] == 3 && n5[1] == 2 && n5[2] == 1));
-    CHECK(n5.to_string() == "-123");
-
-    Number n6(vector<int>{3, 2, 1});
-    CHECK(n6.size() == 3);
-    CHECK(n6.is_negative() == false);
-    CHECK((n6[0] == 3 && n6[1] == 2 && n6[2] == 1));
-    CHECK(n6.to_string() == "123");
-
-    Number n7(vector<int>{3, 2, 1}, true);
-    CHECK(n7.size() == 3);
-    CHECK(n7.is_negative() == true);
-    CHECK((n7[0] == 3 && n7[1] == 2 && n7[2] == 1));
-    CHECK(n7.to_string() == "-123");
-
-    // TODO: add tests for invalid arguments
-  }
-
-  SECTION("Set") {
+TEST_CASE("Number Constructors", "[constructors]") {
+  SECTION("Default Constructor") {
     Number n;
-    n.set("123");
-    CHECK(n.size() == 3);
     CHECK(n.is_negative() == false);
-    CHECK((n[0] == 3 && n[1] == 2 && n[2] == 1));
-    CHECK(n.to_string() == "123");
-
-    n.set("-123");
-    CHECK(n.size() == 3);
-    CHECK(n.is_negative() == true);
-    CHECK((n[0] == 3 && n[1] == 2 && n[2] == 1));
-    CHECK(n.to_string() == "-123");
-
-    n.set("000");
-    CHECK(n.size() == 1);
-    CHECK(n.is_negative() == false);
-    CHECK(n[0] == 0);
-    CHECK(n.to_string() == "0");
-
-    n.set("-000");
-    CHECK(n.size() == 1);
-    CHECK(n.is_negative() == false);
-    CHECK(n[0] == 0);
-    CHECK(n.to_string() == "0");
+    CHECK(n.get_digits() == vector<int>{0});
   }
 
-  SECTION("Multiplication") {
-    Number a("123456789012345678901234567890");
-    Number b("123456789012345678901234567890");
-    Number c = fft_multiply(a, b);
+  SECTION("String Constructor") {
+    Number n("123");
+    CHECK(n.is_negative() == false);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
 
-    REQUIRE(c.to_string() ==
-            "15241578753238836750495351562536198787501905199875019052100");
+  SECTION("Negative String Constructor") {
+    Number n("-123");
+    CHECK(n.is_negative() == true);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Invalid String Constructor") {
+    // Non numeric string
+    CHECK_THROWS_AS(Number("abc"), invalid_argument);
+    CHECK_THROWS_AS(Number("abc123"), invalid_argument);
+    CHECK_THROWS_AS(Number("123abc"), invalid_argument);
+    CHECK_THROWS_AS(Number("a123bc"), invalid_argument);
+    // Empty string
+    CHECK_THROWS_AS(Number(""), invalid_argument);
+    CHECK_THROWS_AS(Number(" "), invalid_argument);
+    CHECK_THROWS_AS(Number("-"), invalid_argument);
+    // Leading zeros (allowed)
+    CHECK_NOTHROW(Number("000123"));
+    CHECK_NOTHROW(Number("-000123"));
+    // Negative zero
+    CHECK_THROWS_AS(Number("-0"), invalid_argument);
+    CHECK_THROWS_AS(Number("-000"), invalid_argument);
+    // Negative sign in invalid position
+    CHECK_THROWS_AS(Number("1-23"), invalid_argument);
+    CHECK_THROWS_AS(Number("-1-23"), invalid_argument);
+    CHECK_THROWS_AS(Number("123-"), invalid_argument);
+  }
+
+  SECTION("Int64 Constructor") {
+    Number n(123);
+    CHECK(n.is_negative() == false);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Negative Int64 Constructor") {
+    Number n(-123);
+    CHECK(n.is_negative() == true);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Vector Constructor") {
+    Number n(vector<int>{3, 2, 1});
+    CHECK(n.is_negative() == false);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Negative Vector Constructor") {
+    Number n(vector<int>{3, 2, 1}, true);
+    CHECK(n.is_negative() == true);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Invalid Vector Constructor") {
+    // Empty vector
+    CHECK_THROWS_AS(Number(vector<int>{}), invalid_argument);
+    // Vector with leading zeros (allowed)
+    CHECK_NOTHROW(Number(vector<int>{0, 0, 1, 2, 3}));
+    // Vector with negative zero
+    CHECK_THROWS_AS(Number(vector<int>{0}, true), invalid_argument);
+    CHECK_THROWS_AS(Number(vector<int>{0, 0, 0}, true), invalid_argument);
+    // Vector with not base 10 digits
+    CHECK_THROWS_AS(Number(vector<int>{10}), invalid_argument);
+    CHECK_THROWS_AS(Number(vector<int>{-1}), invalid_argument);
+  }
+
+  SECTION("Copy Constructor") {
+    Number n1("123");
+    Number n2(n1);
+    CHECK(n2.is_negative() == false);
+    CHECK(n2.get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("Move Constructor") {
+    Number n1("123");
+    Number n2(move(n1));
+    CHECK(n2.is_negative() == false);
+    CHECK(n2.get_digits() == vector<int>{3, 2, 1});
+  }
+}
+
+TEST_CASE("Number Getters", "[getters]") {
+  SECTION("is_negative") {
+    CHECK(Number("123").is_negative() == false);
+    CHECK(Number("-123").is_negative() == true);
+  }
+
+  SECTION("get_digits") {
+    CHECK(Number("123").get_digits() == vector<int>{3, 2, 1});
+    CHECK(Number("-123").get_digits() == vector<int>{3, 2, 1});
+  }
+
+  SECTION("to_string") {
+    CHECK(Number("123").to_string() == "123");
+    CHECK(Number("-123").to_string() == "-123");
+  }
+
+  SECTION("size") {
+    CHECK(Number("0").size() == 1);
+    CHECK(Number("123").size() == 3);
+    CHECK(Number("-123").size() == 3);
+  }
+
+  SECTION("operator[]") {
+    Number n("123");
+    CHECK(n[0] == 3);
+    CHECK(n[1] == 2);
+    CHECK(n[2] == 1);
   }
 }
 

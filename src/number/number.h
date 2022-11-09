@@ -18,6 +18,7 @@ class Number {
   bool is_negative() const;
   uint16_t operator[](const size_t &i) const;
   std::string to_string() const;
+  std::vector<int> get_digits() const;
 
   void set(const std::string &s);
   void load(const std::string &filename);
