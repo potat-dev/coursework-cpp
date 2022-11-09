@@ -59,14 +59,14 @@ for power in trange(START_POWER, END_POWER + 1, desc='Generating numbers'):
     digits = 2 ** power
     number = generate_num(digits)
     numbers.append(mpz(number))
-    with open(os.path.join(folder, f'{power}.txt'), 'w') as f:
+    with open(os.path.join(folder, f'{power}.txt'), 'w', encoding='utf_8') as f:
         f.write(number)
         time.sleep(0.1)
 
 # создаем файлы с ответами
 for pow_1 in trange(START_POWER, END_POWER + 1,            desc='Multiplying number'):
     for pow_2 in trange(pow_1, END_POWER + 1, leave=False, desc='  by second number'):
-        with open(os.path.join(folder, f'{pow_1}_{pow_2}.txt'), 'w') as f:
+        with open(os.path.join(folder, f'{pow_1}_{pow_2}.txt'), 'w', encoding='utf_8') as f:
             ans = numbers[pow_1] * numbers[pow_2]
             ans_str = ans.digits()
             f.write(ans_str)
