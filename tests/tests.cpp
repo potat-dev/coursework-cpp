@@ -1,5 +1,6 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <sstream>
 
 #define CATCH_CONFIG_MAIN
 
@@ -127,6 +128,46 @@ TEST_CASE("Number Getters", "[getters]") {
     CHECK(n[0] == 3);
     CHECK(n[1] == 2);
     CHECK(n[2] == 1);
+  }
+
+  SECTION("operator<<") {
+    Number n1("123"), n2("-123");
+    stringstream s1, s2;
+    s1 << n1;
+    s2 << n2;
+    CHECK(s1.str() == "123");
+    CHECK(s2.str() == "-123");
+  }
+}
+
+TEST_CASE("Number Setters", "[setters]") {
+  SECTION("set") {
+    Number n;
+    n.set("123");
+    CHECK(n.is_negative() == false);
+    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+}
+
+TEST_CASE("Number Multiplication", "[multiplication]") {
+  SECTION("fft_multiply") {
+    CHECK(fft_multiply(Number("0"), Number("0")).to_string() == "0");
+    CHECK(fft_multiply(Number("0"), Number("123")).to_string() == "0");
+    CHECK(fft_multiply(Number("123"), Number("0")).to_string() == "0");
+    CHECK(fft_multiply(Number("123"), Number("123")).to_string() == "15129");
+    CHECK(fft_multiply(Number("-123"), Number("123")).to_string() == "-15129");
+    CHECK(fft_multiply(Number("123"), Number("-123")).to_string() == "-15129");
+    CHECK(fft_multiply(Number("-123"), Number("-123")).to_string() == "15129");
+  }
+
+  SECTION("column_multiply") {
+    CHECK(column_multiply(Number("0"), Number("0")).to_string() == "0");
+    CHECK(column_multiply(Number("0"), Number("123")).to_string() == "0");
+    CHECK(column_multiply(Number("123"), Number("0")).to_string() == "0");
+    CHECK(column_multiply(Number("123"), Number("123")).to_string() == "15129");
+    CHECK(column_multiply(Number("-123"), Number("123")).to_string() == "-15129");
+    CHECK(column_multiply(Number("123"), Number("-123")).to_string() == "-15129");
+    CHECK(column_multiply(Number("-123"), Number("-123")).to_string() == "15129");
   }
 }
 
