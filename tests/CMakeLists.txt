@@ -1,5 +1,4 @@
 project(tests)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -10,11 +9,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-include(CTest)
-include(Catch)
-
 add_executable(tests tests.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain number fourier)
+
+include(CTest)
+include(Catch)
 
 # discover tests
 catch_discover_tests(tests)

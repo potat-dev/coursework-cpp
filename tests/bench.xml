@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catch2TestRun name="tests.exe" rng-seed="401500721" catch2-version="3.0.1" filters="[benchmark]">
+  <TestCase name="Numbers Benchmark" tags="[benchmark]" filename="D:/Projects/coursework-cpp/tests/tests.cpp" line="168">
+    <BenchmarkResults name="fft multiply: 1 x 1" samples="100" resamples="100000" iterations="59" clockResolution="37.9636" estimatedDuration="3.8291e+06">
+      <!-- All values in nano seconds -->
+      <mean value="649.136" lowerBound="645.203" upperBound="655.898" ci="0.95"/>
+      <standardDeviation value="25.7509" lowerBound="16.3038" upperBound="42.5371" ci="0.95"/>
+      <outliers variance="0.365662" lowMild="0" lowSevere="15" highMild="2" highSevere="7"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 1 x 1" samples="100" resamples="100000" iterations="150" clockResolution="37.9636" estimatedDuration="3.795e+06">
+      <!-- All values in nano seconds -->
+      <mean value="261.133" lowerBound="259.733" upperBound="262.893" ci="0.95"/>
+      <standardDeviation value="7.94974" lowerBound="6.63358" upperBound="9.86669" ci="0.95"/>
+      <outliers variance="0.25771" lowMild="0" lowSevere="0" highMild="3" highSevere="0"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 4 x 4" samples="100" resamples="100000" iterations="30" clockResolution="37.9636" estimatedDuration="3.912e+06">
+      <!-- All values in nano seconds -->
+      <mean value="1317.97" lowerBound="1308.7" upperBound="1334.03" ci="0.95"/>
+      <standardDeviation value="60.5188" lowerBound="40.3641" upperBound="101.331" ci="0.95"/>
+      <outliers variance="0.434994" lowMild="0" lowSevere="0" highMild="1" highSevere="2"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 4 x 4" samples="100" resamples="100000" iterations="69" clockResolution="37.9636" estimatedDuration="3.795e+06">
+      <!-- All values in nano seconds -->
+      <mean value="554.217" lowerBound="551.275" upperBound="558.319" ci="0.95"/>
+      <standardDeviation value="17.5163" lowerBound="13.7544" upperBound="24.6991" ci="0.95"/>
+      <outliers variance="0.267737" lowMild="0" lowSevere="0" highMild="3" highSevere="1"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 16 x 16" samples="100" resamples="100000" iterations="15" clockResolution="37.9636" estimatedDuration="3.99e+06">
+      <!-- All values in nano seconds -->
+      <mean value="2692.07" lowerBound="2675.47" upperBound="2722" ci="0.95"/>
+      <standardDeviation value="110.835" lowerBound="73.7938" upperBound="187.748" ci="0.95"/>
+      <outliers variance="0.385251" lowMild="0" lowSevere="6" highMild="1" highSevere="12"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 16 x 16" samples="100" resamples="100000" iterations="40" clockResolution="37.9636" estimatedDuration="3.84e+06">
+      <!-- All values in nano seconds -->
+      <mean value="968.3" lowerBound="964.025" upperBound="975.35" ci="0.95"/>
+      <standardDeviation value="27.4337" lowerBound="18.0739" upperBound="47.6068" ci="0.95"/>
+      <outliers variance="0.228788" lowMild="2" lowSevere="11" highMild="1" highSevere="8"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 256 x 256" samples="100" resamples="100000" iterations="2" clockResolution="37.9636" estimatedDuration="5.7718e+06">
+      <!-- All values in nano seconds -->
+      <mean value="28890.5" lowerBound="28734" upperBound="29161" ci="0.95"/>
+      <standardDeviation value="1021.74" lowerBound="632.021" upperBound="1605.44" ci="0.95"/>
+      <outliers variance="0.316396" lowMild="0" lowSevere="0" highMild="1" highSevere="2"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 256 x 256" samples="100" resamples="100000" iterations="3" clockResolution="37.9636" estimatedDuration="4.7766e+06">
+      <!-- All values in nano seconds -->
+      <mean value="15929.3" lowerBound="15802.3" upperBound="16249.7" ci="0.95"/>
+      <standardDeviation value="957.15" lowerBound="442.092" upperBound="1948.52" ci="0.95"/>
+      <outliers variance="0.574935" lowMild="0" lowSevere="0" highMild="2" highSevere="2"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 1024 x 1024" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="1.30132e+07">
+      <!-- All values in nano seconds -->
+      <mean value="128743" lowerBound="127562" upperBound="130272" ci="0.95"/>
+      <standardDeviation value="6834.81" lowerBound="5650.2" upperBound="8482.57" ci="0.95"/>
+      <outliers variance="0.514427" lowMild="0" lowSevere="0" highMild="13" highSevere="2"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 1024 x 1024" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="2.15894e+07">
+      <!-- All values in nano seconds -->
+      <mean value="218861" lowerBound="215770" upperBound="232525" ci="0.95"/>
+      <standardDeviation value="28251.5" lowerBound="3495.71" upperBound="66587.6" ci="0.95"/>
+      <outliers variance="0.862902" lowMild="0" lowSevere="0" highMild="3" highSevere="3"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 4096 x 4096" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="6.69069e+07">
+      <!-- All values in nano seconds -->
+      <mean value="647769" lowerBound="635581" upperBound="663975" ci="0.95"/>
+      <standardDeviation value="71134.1" lowerBound="56097.5" upperBound="92078.9" ci="0.95"/>
+      <outliers variance="0.821074" lowMild="0" lowSevere="0" highMild="4" highSevere="0"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 4096 x 4096" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="3.32071e+08">
+      <!-- All values in nano seconds -->
+      <mean value="3.28055e+06" lowerBound="3.27913e+06" upperBound="3.28232e+06" ci="0.95"/>
+      <standardDeviation value="8066.78" lowerBound="6597.93" upperBound="10198.5" ci="0.95"/>
+      <outliers variance="0.0099" lowMild="0" lowSevere="0" highMild="5" highSevere="2"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="fft multiply: 16384 x 16384" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="3.09616e+08">
+      <!-- All values in nano seconds -->
+      <mean value="2.80775e+06" lowerBound="2.77024e+06" upperBound="2.85222e+06" ci="0.95"/>
+      <standardDeviation value="208092" lowerBound="180972" upperBound="245810" ci="0.95"/>
+      <outliers variance="0.676457" lowMild="0" lowSevere="0" highMild="2" highSevere="0"/>
+    </BenchmarkResults>
+    <BenchmarkResults name="column multiply: 16384 x 16384" samples="100" resamples="100000" iterations="1" clockResolution="37.9636" estimatedDuration="5.21409e+09">
+      <!-- All values in nano seconds -->
+      <mean value="5.21174e+07" lowerBound="5.20464e+07" upperBound="5.22472e+07" ci="0.95"/>
+      <standardDeviation value="475397" lowerBound="295328" upperBound="777789" ci="0.95"/>
+      <outliers variance="0.0099" lowMild="0" lowSevere="0" highMild="3" highSevere="3"/>
+    </BenchmarkResults>
+    <OverallResult success="true"/>
+  </TestCase>
+  <OverallResults successes="0" failures="0" expectedFailures="0"/>
+  <OverallResultsCases successes="1" failures="0" expectedFailures="0"/>
+</Catch2TestRun>

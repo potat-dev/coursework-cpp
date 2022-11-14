@@ -133,10 +133,10 @@ TEST_CASE("Number Getters", "[getters]") {
   }
 
   SECTION("operator<<") {
-    Number n1("123"), n2("-123");
-    stringstream s1, s2;
-    s1 << n1;
-    s2 << n2;
+    Number n("0"), n1("123"), n2("-123");
+    stringstream s, s1, s2;
+    s << n, s1 << n1, s2 << n2;
+    CHECK(s.str() == "0");
     CHECK(s1.str() == "123");
     CHECK(s2.str() == "-123");
   }
@@ -152,20 +152,19 @@ TEST_CASE("Number Setters", "[setters]") {
 }
 
 TEST_CASE("Number Multiplication", "[multiplication]") {
-  auto n1 = GENERATE(0, 0, 123, 123, -123, 123, -123);
-  auto n2 = GENERATE(0, 123, 0, 123, 123, -123, -123);
-  auto expected = GENERATE(0, 0, 0, 15129, -15129, -15129, 15129);
+  auto n1 = GENERATE(0, 123, -123, 1234567890);
+  auto n2 = GENERATE(0, 123, -123, 1234567890);
 
   SECTION("fft_multiply") {
-    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(expected));
+    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
   }
 
   SECTION("column_multiply") {
-    CHECK(column_multiply(Number(n1), Number(n2)) == Number(expected));
+    CHECK(column_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
   }
 }
 
-TEST_CASE("Numbers Benchmark", "[benchmark]") {
+TEST_CASE("Numbers Benchmark", "[!benchmark]") {
   auto random_string = [](int len) -> string {
     string s;
     for (int i = 0; i < len; i++)
