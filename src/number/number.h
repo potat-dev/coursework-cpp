@@ -25,6 +25,7 @@ class Number {
   void save(const std::string &filename);
 
   friend std::ostream &operator<<(std::ostream &out, const Number &n);
+  bool operator==(const Number &n) const;
 
   friend Number fft_multiply(const Number &a, const Number &b);
   friend Number column_multiply(const Number &a, const Number &b);

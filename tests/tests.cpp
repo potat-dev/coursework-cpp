@@ -1,5 +1,7 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators_adapters.hpp>
+#include <catch2/generators/catch_generators_random.hpp>
 #include <sstream>
 
 #define CATCH_CONFIG_MAIN
@@ -49,16 +51,16 @@ TEST_CASE("Number Constructors", "[constructors]") {
     CHECK_THROWS_AS(Number("123-"), invalid_argument);
   }
 
-  SECTION("Int64 Constructor") {
-    Number n(123);
-    CHECK(n.is_negative() == false);
-    CHECK(n.get_digits() == vector<int>{3, 2, 1});
-  }
-
-  SECTION("Negative Int64 Constructor") {
-    Number n(-123);
-    CHECK(n.is_negative() == true);
-    CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  SECTION("uint64 Constructor") {
+    Number n1(0);
+    CHECK(n1.is_negative() == false);
+    CHECK(n1.get_digits() == vector<int>{0});
+    Number n2(123);
+    CHECK(n2.is_negative() == false);
+    CHECK(n2.get_digits() == vector<int>{3, 2, 1});
+    Number n3(-123);
+    CHECK(n3.is_negative() == true);
+    CHECK(n3.get_digits() == vector<int>{3, 2, 1});
   }
 
   SECTION("Vector Constructor") {
@@ -150,32 +152,37 @@ TEST_CASE("Number Setters", "[setters]") {
 }
 
 TEST_CASE("Number Multiplication", "[multiplication]") {
+  auto n1 = GENERATE(0, 0, 123, 123, -123, 123, -123);
+  auto n2 = GENERATE(0, 123, 0, 123, 123, -123, -123);
+  auto expected = GENERATE(0, 0, 0, 15129, -15129, -15129, 15129);
+
   SECTION("fft_multiply") {
-    CHECK(fft_multiply(Number("0"), Number("0")).to_string() == "0");
-    CHECK(fft_multiply(Number("0"), Number("123")).to_string() == "0");
-    CHECK(fft_multiply(Number("123"), Number("0")).to_string() == "0");
-    CHECK(fft_multiply(Number("123"), Number("123")).to_string() == "15129");
-    CHECK(fft_multiply(Number("-123"), Number("123")).to_string() == "-15129");
-    CHECK(fft_multiply(Number("123"), Number("-123")).to_string() == "-15129");
-    CHECK(fft_multiply(Number("-123"), Number("-123")).to_string() == "15129");
+    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(expected));
   }
 
   SECTION("column_multiply") {
-    CHECK(column_multiply(Number("0"), Number("0")).to_string() == "0");
-    CHECK(column_multiply(Number("0"), Number("123")).to_string() == "0");
-    CHECK(column_multiply(Number("123"), Number("0")).to_string() == "0");
-    CHECK(column_multiply(Number("123"), Number("123")).to_string() == "15129");
-    CHECK(column_multiply(Number("-123"), Number("123")).to_string() == "-15129");
-    CHECK(column_multiply(Number("123"), Number("-123")).to_string() == "-15129");
-    CHECK(column_multiply(Number("-123"), Number("-123")).to_string() == "15129");
+    CHECK(column_multiply(Number(n1), Number(n2)) == Number(expected));
   }
 }
 
-TEST_CASE("Numbers Benchmark", "[!benchmark]") {
-  Number a("123456789012345678901234567890");
-  Number b("123456789012345678901234567890");
+TEST_CASE("Numbers Benchmark", "[benchmark]") {
+  auto random_string = [](int len) -> string {
+    string s;
+    for (int i = 0; i < len; i++)
+      s += "0123456789"[rand() % (i ? 10 : 9) + (i == 0)];
+    return s;
+  };
 
-  BENCHMARK("FFT Multiplication") { return fft_multiply(a, b); };
+  auto n = GENERATE(0, 2, 4, 8, 10, 12, 14);
+  int len1 = 1 << n, len2 = 1 << n;
+  auto n1 = random_string(len1);
+  auto n2 = random_string(len2);
 
-  BENCHMARK("Naive Multiplication") { return column_multiply(a, b); };
+  BENCHMARK("fft multiply: " + to_string(len1) + " x " + to_string(len2)) {
+    return fft_multiply(Number(n1), Number(n2));
+  };
+
+  BENCHMARK("column multiply: " + to_string(len1) + " x " + to_string(len2)) {
+    return column_multiply(Number(n1), Number(n2));
+  };
 }

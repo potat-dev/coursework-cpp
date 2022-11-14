@@ -78,6 +78,15 @@ ostream &operator<<(ostream &out, const Number &n) {
   return out;
 }
 
+bool Number::operator==(const Number &n) const {
+  if (negative != n.negative) return false;
+  if (digits.size() != n.digits.size()) return false;
+  for (int i = 0; i < digits.size(); i++) {
+    if (digits[i] != n.digits[i]) return false;
+  }
+  return true;
+}
+
 // multiplication algorithms
 
 Number fft_multiply(const Number &a, const Number &b) {
