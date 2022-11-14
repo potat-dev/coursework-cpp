@@ -152,15 +152,19 @@ TEST_CASE("Number Setters", "[setters]") {
 }
 
 TEST_CASE("Number Multiplication", "[multiplication]") {
-  auto n1 = GENERATE(0, 123, -123, 1234567890);
-  auto n2 = GENERATE(0, 123, -123, 1234567890);
+  auto n1 = GENERATE(0LL, 123LL, -123LL, 1234567890LL, -1234567890LL);
+  auto n2 = GENERATE(0LL, 123LL, -123LL, 1234567890LL, -1234567890LL);
+  auto res = n1 * n2;
+
+  cout << "Testing multiplication of " << n1 << " and " << n2 << endl;
+  cout << "Result: " << res << endl;
 
   SECTION("fft_multiply") {
-    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
+    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(res));
   }
 
   SECTION("column_multiply") {
-    CHECK(column_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
+    CHECK(column_multiply(Number(n1), Number(n2)) == Number(res));
   }
 }
 

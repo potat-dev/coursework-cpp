@@ -14,11 +14,12 @@ Number::Number() : digits(1, 0), negative(false) {}
 Number::Number(const string &s) { set(s); }
 
 Number::Number(const int64_t &n) {
-  if (n < 0) negative = true;
-  int64_t m = n < 0 ? -n : n;
-  while (m > 0) {
-    digits.push_back(m % 10);
-    m /= 10;
+  if (n == 0) {
+    digits = vector<int>(1, 0);
+    negative = false;
+  } else {
+    negative = n < 0;
+    set(std::to_string(negative ? -n : n));
   }
 }
 
@@ -53,7 +54,6 @@ void Number::set(const string &s) {
   if (digits.empty()) throw invalid_argument("Invalid number");
   while (digits.size() > 1 && digits.back() == 0) digits.pop_back();
   if ((digits.size() == 1) && (digits[0] == 0) && negative) {
-    // negative = false;
     throw invalid_argument("Invalid number");
   }
 }
