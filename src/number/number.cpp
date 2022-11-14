@@ -35,10 +35,12 @@ string Number::to_string() const {
   return s;
 }
 
+vector<int> Number::get_digits() const { return digits; }
+
 void Number::set(const string &s) {
   digits.clear();
   if (s.empty()) throw invalid_argument("Invalid number");
-  negative = s.at(0) == '-';
+  negative = (s.at(0) == '-');
 
   for (int i = s.size() - 1; i >= negative; i--) {
     if (s[i] >= '0' && s[i] <= '9') {
@@ -50,7 +52,10 @@ void Number::set(const string &s) {
 
   if (digits.empty()) throw invalid_argument("Invalid number");
   while (digits.size() > 1 && digits.back() == 0) digits.pop_back();
-  if (digits.size() == 1 && digits[0] == 0) negative = false;
+  if ((digits.size() == 1) && (digits[0] == 0) && negative) {
+    // negative = false;
+    throw invalid_argument("Invalid number");
+  }
 }
 
 void Number::load(const string &filename) {
@@ -71,6 +76,15 @@ ostream &operator<<(ostream &out, const Number &n) {
   if (n.negative) out << '-';
   for (int i = n.digits.size() - 1; i >= 0; i--) out << (int)n.digits[i];
   return out;
+}
+
+bool Number::operator==(const Number &n) const {
+  if (negative != n.negative) return false;
+  if (digits.size() != n.digits.size()) return false;
+  for (int i = 0; i < digits.size(); i++) {
+    if (digits[i] != n.digits[i]) return false;
+  }
+  return true;
 }
 
 // multiplication algorithms

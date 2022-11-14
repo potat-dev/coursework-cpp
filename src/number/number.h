@@ -18,12 +18,14 @@ class Number {
   bool is_negative() const;
   uint16_t operator[](const size_t &i) const;
   std::string to_string() const;
+  std::vector<int> get_digits() const;
 
   void set(const std::string &s);
   void load(const std::string &filename);
   void save(const std::string &filename);
 
   friend std::ostream &operator<<(std::ostream &out, const Number &n);
+  bool operator==(const Number &n) const;
 
   friend Number fft_multiply(const Number &a, const Number &b);
   friend Number column_multiply(const Number &a, const Number &b);
