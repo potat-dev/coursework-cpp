@@ -3,6 +3,7 @@
 #include <catch2/generators/catch_generators_adapters.hpp>
 #include <catch2/generators/catch_generators_random.hpp>
 #include <sstream>
+#include <fstream>
 
 #define CATCH_CONFIG_MAIN
 
@@ -148,6 +149,24 @@ TEST_CASE("Number Setters", "[setters]") {
     n.set("123");
     CHECK(n.is_negative() == false);
     CHECK(n.get_digits() == vector<int>{3, 2, 1});
+  }
+}
+
+TEST_CASE("Number Save & Load", "[file_io]") {
+  SECTION("write") {
+    Number n("123456789123456789123456789");
+    n.save("test.txt");
+    ifstream f("test.txt");
+    string s;
+    f >> s;
+    CHECK(s == "123456789123456789123456789");
+  }
+
+  SECTION("read") {
+    Number n;
+    n.load("test.txt");
+    CHECK(n.is_negative() == false);
+    CHECK(n.to_string() == "123456789123456789123456789");
   }
 }
 
