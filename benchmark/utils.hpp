@@ -5,6 +5,25 @@
 #include <tabulate/table.hpp>
 #include <vector>
 
+class Settings {
+ public:
+  int min_power = 0;
+  int max_power = 16;
+  int powers_total = 17;
+  int min_iters = 5;
+  int min_seconds = 2;
+  int max_seconds = 10;
+  int at_least_iters = 0;  // 0 means disabled
+
+  std::string cache_file = "cache.txt";
+  std::string csv_file = "results.csv";
+
+  bool use_column = false;
+  bool load_cache = false;
+  bool verbose = false;
+  int max_columns = 8;
+};
+
 // float to string with auto precision
 template <typename T>
 std::string to_str(T f) {
@@ -78,11 +97,13 @@ void export_csv(std::vector<std::vector<T>> table, std::string filename,
 }
 
 void load_cache(std::string filename, std::vector<std::vector<int>> *iters,
-                std::vector<std::vector<long double>> *times, int *total_time,
-                int min_power, int max_power, int min_iter, int min_seconds,
-                int max_seconds, int at_least_one_iteration);
+                std::vector<std::vector<long double>> *times,
+                long double *total_time, int min_power, int max_power,
+                int min_iter, int min_seconds, int max_seconds,
+                int at_least_one_iteration);
 
 void save_cache(std::string filename, std::vector<std::vector<int>> &iters,
-                std::vector<std::vector<long double>> &times, int total_time,
-                int min_power, int max_power, int min_iter, int min_seconds,
-                int max_seconds, int at_least_one_iteration);
+                std::vector<std::vector<long double>> &times,
+                long double total_time, int min_power, int max_power,
+                int min_iter, int min_seconds, int max_seconds,
+                int at_least_one_iteration);

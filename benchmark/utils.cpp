@@ -9,7 +9,7 @@
 using namespace std;
 
 void load_cache(string filename, vector<vector<int>> *iters,
-                vector<vector<long double>> *times, int *total_time,
+                vector<vector<long double>> *times, long double *total_time,
                 int min_power, int max_power, int min_iter, int min_seconds,
                 int max_seconds, int at_least_one_iteration) {
   // load cache
@@ -47,7 +47,7 @@ void load_cache(string filename, vector<vector<int>> *iters,
 }
 
 void save_cache(string filename, vector<vector<int>> &iters,
-                vector<vector<long double>> &times, int total_time,
+                vector<vector<long double>> &times, long double total_time,
                 int min_power, int max_power, int min_iter, int min_seconds,
                 int max_seconds, int at_least_one_iteration) {
   // save cache

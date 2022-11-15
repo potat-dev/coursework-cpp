@@ -15,8 +15,8 @@ using namespace std;
 int main(int argc, char **argv) {
   // create CLI app
   CLI::App app(TITLE, EXEC);
-  Settings config;
   app.footer(FOOTER);
+  Settings config;
 
   // input and output files
   app.add_option("file 1", config.file_1, "First file")->option_text("FILE");
