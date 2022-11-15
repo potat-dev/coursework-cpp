@@ -27,16 +27,29 @@ Number::Number(const int64_t &n) {
   }
 }
 
-Number::Number(const vector<int> &v, bool n) : digits(v), negative(n) {}
+Number::Number(const vector<int> &v, bool n) : digits(v), negative(n) {
+  if (digits.empty()) {
+    throw invalid_argument("Empty vector");
+  }
+  while (digits.size() > 1 && digits.back() == 0) {
+    digits.pop_back();
+  }
+  if (digits.size() == 1 && digits[0] == 0 && negative) {
+    throw invalid_argument("Negative zero");
+  }
+  for (auto &d : digits) {
+    if (d < 0 || d > 9) throw invalid_argument("Invalid digit");
+  }
+}
 
 size_t Number::size() const { return digits.size(); }
 bool Number::is_negative() const { return negative; }
 uint16_t Number::operator[](const size_t &i) const { return digits[i]; }
 
 string Number::to_string() const {
-  string s = "";
-  if (negative) s += "-";
-  for (int i = digits.size() - 1; i >= 0; i--) s += digits[i] + '0';
+  string s = (negative ? "-" : "");
+  for (int i = digits.size() - 1; i >= 0; s += digits[i--] + '0')
+    ;
   return s;
 }
 
@@ -59,26 +72,35 @@ void Number::set(const string &s) {
   while (digits.size() > 1 && digits.back() == 0) digits.pop_back();
   if ((digits.size() == 1) && (digits[0] == 0) && negative) {
     throw invalid_argument("Invalid number");
+    negative = false;
   }
 }
 
 void Number::load(const string &filename) {
   ifstream in(filename);
-  if (!in.is_open()) throw invalid_argument("File not found");
-  string s;
-  in >> s;
-  set(s);
+  if (!in.is_open()) {
+    throw invalid_argument("File not found");
+  } else {
+    string s;
+    in >> s;
+    set(s);
+  }
 }
 
 void Number::save(const string &filename) {
   ofstream out(filename);
-  if (!out.is_open()) throw invalid_argument("File not found");
-  out << *this;
+  if (!out.is_open()) {
+    throw invalid_argument("File not found");
+  } else {
+    out << to_string();
+  }
 }
 
 ostream &operator<<(ostream &out, const Number &n) {
   if (n.negative) out << '-';
-  for (int i = n.digits.size() - 1; i >= 0; i--) out << (int)n.digits[i];
+  for (int i = n.digits.size() - 1; i >= 0; i--) {
+    out << (int)n.digits[i];
+  }
   return out;
 }
 
