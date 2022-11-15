@@ -156,9 +156,6 @@ TEST_CASE("Number Multiplication", "[multiplication]") {
   auto n2 = GENERATE(0LL, 123LL, -123LL, 1234567890LL, -1234567890LL);
   auto res = n1 * n2;
 
-  cout << "Testing multiplication of " << n1 << " and " << n2 << endl;
-  cout << "Result: " << res << endl;
-
   SECTION("fft_multiply") {
     CHECK(fft_multiply(Number(n1), Number(n2)) == Number(res));
   }

@@ -19,7 +19,11 @@ Number::Number(const int64_t &n) {
     negative = false;
   } else {
     negative = n < 0;
-    set(std::to_string(negative ? -n : n));
+    int64_t m = (negative ? -n : n);
+    while (m > 0) {
+      digits.push_back(m % 10);
+      m /= 10;
+    }
   }
 }
 
@@ -111,6 +115,7 @@ Number fft_multiply(const Number &a, const Number &b) {
   }
 
   while (result.size() > 1 && result.back() == 0) result.pop_back();
+  if (result.size() == 1 && result[0] == 0) return Number();
   return Number(result, a.negative != b.negative);
 }
 
@@ -126,5 +131,6 @@ Number column_multiply(const Number &a, const Number &b) {
     result[i] %= 10;
   }
   while (result.size() > 1 && result.back() == 0) result.pop_back();
-  return Number(result, a.is_negative() ^ b.is_negative());
+  if (result.size() == 1 && result[0] == 0) return Number();
+  return Number(result, a.negative != b.negative);
 }
