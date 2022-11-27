@@ -52,7 +52,7 @@ void interactive_mode(const Settings &config) {
     try {
       n1.set(buf);
       if (config.verbose) cout << "[i] Digits count: " << n1.size() << endl;
-    } catch (const invalid_argument &e) {
+    } catch (const invalid_argument) {
       cout << "[x] Invalid number" << endl;
       continue;
     }
@@ -65,7 +65,7 @@ void interactive_mode(const Settings &config) {
     try {
       n2.set(buf);
       if (config.verbose) cout << "[i] Digits count: " << n2.size() << endl;
-    } catch (const invalid_argument &e) {
+    } catch (const invalid_argument) {
       cout << "[x] Invalid number" << endl;
       continue;
     }
@@ -105,7 +105,7 @@ void file_mode(const Settings &config) {
   try {
     n1.load(config.file_1);
     if (config.verbose) cout << "Number 1 size: " << n1.size() << endl;
-  } catch (const exception &e) {
+  } catch (const exception) {
     cout << "Error: cannot load number from file "
          << (config.file_1.length() ? config.file_1 : "1");
     return;
@@ -114,7 +114,7 @@ void file_mode(const Settings &config) {
   try {
     n2.load(config.file_2);
     if (config.verbose) cout << "Number 2 size: " << n2.size() << endl;
-  } catch (const exception &e) {
+  } catch (const exception) {
     cout << "Error: cannot load number from file "
          << (config.file_2.length() ? config.file_2 : "2");
     return;

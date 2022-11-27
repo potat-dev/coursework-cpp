@@ -60,7 +60,7 @@ void Number::set(const string &s) {
   if (s.empty()) throw invalid_argument("Invalid number");
   negative = (s.at(0) == '-');
 
-  for (int i = s.size() - 1; i >= negative; i--) {
+  for (int i = s.size() - 1; i >= (int)negative; i--) {
     if (s[i] >= '0' && s[i] <= '9') {
       digits.push_back(s[i] - '0');
     } else {

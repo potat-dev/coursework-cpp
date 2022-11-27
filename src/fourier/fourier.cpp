@@ -9,7 +9,7 @@
 
 using namespace std;
 
-constexpr double M_2PI = 2 * M_PI;
+constexpr double M_2PI = 6.283185307179586232;
 
 void fft(vector<base> &a, bool invert) {
   size_t n = a.size();
