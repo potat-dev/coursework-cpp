@@ -43,7 +43,9 @@ void interactive_mode(const Settings &config) {
     signal(SIGINT, [](int) { /* empty handler */ });
 
     iter++;
-    cout << endl << "Enter first number:" << endl << "[" << iter << "] > ";
+    cout << endl;
+    if (config.verbose) cout << "Enter first number:" << endl;
+    cout << "[" << iter << "] < ";
     getline(cin, buf);
     if (cin.fail() || buf.empty() || buf == "q") break;
 
@@ -55,7 +57,8 @@ void interactive_mode(const Settings &config) {
       continue;
     }
 
-    cout << endl << "Enter second number:" << endl << "[" << iter << "] > ";
+    if (config.verbose) cout << endl << "Enter second number:" << endl;
+    cout << "[" << iter << "] < ";
     getline(cin, buf);
     if (cin.fail() || buf.empty() || buf == "q") break;
 
@@ -78,7 +81,8 @@ void interactive_mode(const Settings &config) {
       res = mult(n1, n2);
     }
 
-    cout << endl << "Result:" << endl << "[" << iter << "] > " << res << endl;
+    if (config.verbose) cout << endl << "Result:" << endl;
+    cout << "[" << iter << "] > " << res << endl;
     if (config.verbose) cout << "[i] Digits count: " << res.size() << endl;
     if (config.iters)
       cout << endl << "[i] Average time: " << time << " ms / iter" << endl;
