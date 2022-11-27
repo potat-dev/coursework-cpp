@@ -1,6 +1,9 @@
 project(tests)
 include(FetchContent)
 
+# cxx standard
+set (CMAKE_CXX_STANDARD 11)
+
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
