@@ -3,6 +3,7 @@
 #include <catch2/generators/catch_generators_adapters.hpp>
 #include <catch2/generators/catch_generators_random.hpp>
 #include <sstream>
+#include <fstream>
 
 #define CATCH_CONFIG_MAIN
 
@@ -151,16 +152,35 @@ TEST_CASE("Number Setters", "[setters]") {
   }
 }
 
+TEST_CASE("Number Save & Load", "[file_io]") {
+  SECTION("write") {
+    Number n("123456789123456789123456789");
+    n.save("test.txt");
+    ifstream f("test.txt");
+    string s;
+    f >> s;
+    CHECK(s == "123456789123456789123456789");
+  }
+
+  SECTION("read") {
+    Number n;
+    n.load("test.txt");
+    CHECK(n.is_negative() == false);
+    CHECK(n.to_string() == "123456789123456789123456789");
+  }
+}
+
 TEST_CASE("Number Multiplication", "[multiplication]") {
-  auto n1 = GENERATE(0, 123, -123, 1234567890);
-  auto n2 = GENERATE(0, 123, -123, 1234567890);
+  auto n1 = GENERATE(0LL, 123LL, -123LL, 1234567890LL, -1234567890LL);
+  auto n2 = GENERATE(0LL, 123LL, -123LL, 1234567890LL, -1234567890LL);
+  auto res = n1 * n2;
 
   SECTION("fft_multiply") {
-    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
+    CHECK(fft_multiply(Number(n1), Number(n2)) == Number(res));
   }
 
   SECTION("column_multiply") {
-    CHECK(column_multiply(Number(n1), Number(n2)) == Number(n1 * n2));
+    CHECK(column_multiply(Number(n1), Number(n2)) == Number(res));
   }
 }
 
