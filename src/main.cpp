@@ -8,7 +8,7 @@
 using namespace std;
 
 #define EXEC "multiplier.exe"
-#define TITLE "\nBig Number Multiplier - v1.0"
+#define TITLE "\nBig Number Multiplier - v2.0"
 #define FOOTER \
   "Created with <3 by Cyber Potato (Denis Churilov) at SUAI University"
 
@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
   app.add_flag("-v, --verbose", config.verbose,
                "Verbose output (digits count, time stats, etc.)");
   app.add_flag("-c, --column", config.use_column, "Use column multiplication");
+
+  // benchmark mode
   app.add_option("-b, --benchmark", config.iters,
                  "Benchmark mode (iterations count)")
       ->option_text("ITERS");

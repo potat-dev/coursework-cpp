@@ -18,3 +18,6 @@ add_executable(multiplier src/main.cpp)
 
 # Линковка программы с библиотекой
 target_link_libraries(multiplier modes number fourier CLI11::CLI11)
+
+# Опции компиляции
+target_compile_options(multiplier PRIVATE -Wall)
